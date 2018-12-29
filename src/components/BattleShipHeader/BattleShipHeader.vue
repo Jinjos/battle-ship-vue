@@ -1,11 +1,17 @@
 <template>
-  <header class="flex-center">BattleShipHeader</header>
+  <header class="flex-center">{{gameTitle}}</header>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 
 export default {
-  name: 'battleShipHeader'
+  name: 'battleShipHeader',
+  computed: {
+    ...mapState([
+      'gameTitle'
+    ])
+  }
 }
 </script>
 <style scoped>

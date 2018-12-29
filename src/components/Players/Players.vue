@@ -1,6 +1,9 @@
 <template>
   <div class="players">
-    <Player v-for="player in playersInfo" :key="player.id"/>
+    <Player 
+      v-for="(player,index) in playersInfo" 
+      :class="{ 'left-player': index === 0, 'right-player': index !== 0 }"
+      :key="player.id"/>
   </div>
 </template>
 
@@ -30,7 +33,7 @@ export default {
 </script>
 <style scoped>
 .players{
-    width: 90%;
+    width: 98%;
     display: grid;
     margin: 0 auto;
     grid-template-columns: 50% 50%;
