@@ -1,8 +1,10 @@
 <template>
   <div class="player flex-center">
     <div class="player-title">Player Title</div>
-    <Board/>
-    <Arsenal/>
+    <div class="board-container">
+      <Board/>
+      <Arsenal/>
+    </div>
   </div>
 </template>
 
@@ -21,5 +23,14 @@ export default {
 <style scoped>
  .player {
    flex-direction: column;
+ }
+ .player .board-container{
+   display:flex;
+ }
+ .player.left-player .board-container{
+   flex-direction: row-reverse;
+ }
+ .player.right-player .board-container{
+   flex-direction: row;
  }
 </style>
