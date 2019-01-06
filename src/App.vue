@@ -6,7 +6,7 @@
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -15,18 +15,22 @@
 body {
   margin: 0;
 }
-
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
 #nav a.router-link-exact-active {
   color: green;
 }
-.flex-center{
+.flex-center {
   justify-content: center;
-  align-items:center;
+  align-items: center;
   display: flex;
 }
-.grif-center{
+.grid-center {
   justify-content: center;
-  align-items:center;
+  align-items: center;
   display: grid;
 }
 </style>
