@@ -2,7 +2,7 @@
   <div class="game">
     <div class="actions flex-center">
       <button :class="{ boardSet: boardSet}" @click="setBoard" :disabled="boardSet">{{boardStatus}}</button>
-      <button :class="{ activeShips: boardSet}" @click="setShip" :disabled="!boardSet">Set a New Ship</button>
+      <button :class="{ activeShips: boardSet}" @click="setShipOnBoard" :disabled="!boardSet">Set a New Ship</button>
     </div>
     <div class="setShip">
      <p class="ship-length">
@@ -30,11 +30,11 @@
        <div>Ship Direction:</div>
        <div class="ship-dir-selection">
          <div class="hor">
-            <input type="radio" id="horizontal" value="Horizontal" v-model="shipDirection">
+            <input type="radio" id="horizontal" value="0" v-model="shipDirection">
             <label for="horizontal">Horizontal</label>
          </div>
          <div class="ver">
-           <input type="radio" id="vertical" value="Vertical" v-model="shipDirection">
+           <input type="radio" id="vertical" value="1" v-model="shipDirection">
           <label for="vertical">Vertical</label>
          </div>
 
@@ -62,22 +62,57 @@ export default {
       boardSet: false,
       boardStatus: 'Create Board',
       shipLength: 2,
-      shipDirection: 'Vertical',
+      shipDirection: '0',
       coordinate: null,
       latitude: 0,
       longtitude: 0
     }
   },
-  conputed: {
-
+  computed: {
+    getSelectedCoordinates: function () {
+      let selectedCoordinates = []
+      // valiate ship length
+      if ((this.shipLength < 2) || (this.shipLength > 5)) {
+        console.log('ship length should be between 2 to 5')
+        return selectedCoordinates
+      }
+      for (let i = 0; i < this.shipLength; ++i) {
+        let lat = this.latitude
+        let lng = this.longtitude
+        if (Number(this.shipDirection) === 0) {
+          // update horizontal point
+          lng = lng + i
+        } else {
+          // update vertical point
+          lat = lat + i
+        }
+        // validate point
+        if (this.validatePt(lat, lng)) {
+          // push to selected array
+          selectedCoordinates.push({ lat, lng })
+        }
+      }
+      console.log(selectedCoordinates)
+      return selectedCoordinates
+    }
   },
   methods: {
+    validatePt: function (lat, lng) {
+      console.log(lat, lng)
+      if (lat >= this.boardSize || lng >= this.boardSize) {
+        console.log('Oops, you are trying to set a ship out of the board')
+        return false
+      }
+      if (Number(this.board[lat][lng]) !== 0) {
+        console.log('Oops, one of the points are already taken')
+        return false
+      }
+      return true
+    },
     selectedCoordinate: function (index, type) {
-      console.log(index)
       return index === this[type] ? 'active' : ''
     },
     setBoard () {
-      console.log('set board')
       for (let i = 0; i < this.boardSize; ++i) {
         let row = []
         for (let x = 0; x < this.boardSize; ++x) {
@@ -85,17 +120,20 @@ export default {
         }
         this.board.push(row)
       }
-      console.log(this.board)
       this.boardSet = true
       this.boardStatus = 'Board Created'
     },
     setCoordinate (index, type) {
-      console.log(index, type)
       this[type] = index
     },
-    setShip (coord, dir, len) {
-      // validate all coordinates
+    setShipOnBoard () {
+      let coordinates = this.getSelectedCoordinates
+      console.log(coordinates)
       // set coordinates
+      coordinates.forEach((coordinate) => {
+        this.board[coordinate.lat][coordinate.lng] = 1
+      })
+      console.log(this.board)
     }
   }
   // components: {
@@ -118,9 +156,9 @@ export default {
   padding: 2rem;
 }
 .game button.boardSet {
-  background: gray;
+  /* background: gray;
   color: lightgreen;
-  font-weight: bold;
+  font-weight: bold; */
 }
 
 .game .setShip {
@@ -134,6 +172,7 @@ export default {
 .active {
   color: #fff;
   background-color: green;
+  border: 1px solid #000;
 
 }
 .ship-length label,
@@ -162,8 +201,8 @@ li {
   text-align: left;
 }
 .activeShips{
-  background-color: green;
-  color: aliceblue
+  /* background-color: green;
+  color: aliceblue */
 }
 
 </style>
