@@ -1,29 +1,23 @@
 <template>
   <div class="game">
-    <div class="actions flex-center">
-      <button :class="{ boardSet: boardSet}" @click="setBoard" :disabled="boardSet">{{boardStatus}}</button>
-      <!-- <button :class="{ activeShips: boardSet}" @click="setShipOnBoard" :disabled="!boardSet">Set a New Ship</button> -->
-    </div>
     <div class="shipConfig flex-center">
-     <div class="ship-length">
-      <label for="shipLength">
-        Ship Length:
-      </label>
-       <input v-model="shipLength" id="shipLength" placeholder="enter ship length">
-    </div>
-    <div class="ship-dir">
-       <div>Ship Direction:</div>
-       <div class="ship-dir-selection">
-         <div class="hor">
+      <div class="ship-length">
+        <label for="shipLength">Ship Length:</label>
+        <input v-model="shipLength" id="shipLength" placeholder="enter ship length">
+      </div>
+      <div class="ship-dir">
+        <div>Ship Direction:</div>
+        <div class="ship-dir-selection">
+          <div class="hor">
             <input type="radio" id="horizontal" value="0" v-model="shipDirection">
             <label for="horizontal">Horizontal</label>
-         </div>
-         <div class="ver">
-           <input type="radio" id="vertical" value="1" v-model="shipDirection">
-          <label for="vertical">Vertical</label>
-         </div>
-       </div>
-    </div>
+          </div>
+          <div class="ver">
+            <input type="radio" id="vertical" value="1" v-model="shipDirection">
+            <label for="vertical">Vertical</label>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="board">
       <table>
@@ -34,32 +28,12 @@
             :x="x"
             :y="y"
             @click.prevent="setShipOnBoard($event)"
-            :class="{ activeShips: boardSet}"></td>
+            :class="{ activeShips: boardSet, 'taken': board[x][y] > 0}"
+          ></td>
         </tr>
       </table>
-
-      <!-- Ship Coordinate:
-      Latitude:
-      <ul>
-        <li v-for="(cell,index) in boardSize" :key="cell" :class="selectedCoordinate(index,'latitude')" @click="setCoordinate(index,'latitude')">
-        {{ index }}
-        </li>
-      </ul>
-      Longtitude:
-       <ul>
-        <li v-for="(cell,index) in boardSize" :key="cell" :class="selectedCoordinate(index,'longtitude')" @click="setCoordinate(index,'longtitude')">
-        {{ index }}
-        </li>
-      </ul> -->
     </div>
-    <div
-      class="error-message flex-center"
-      v-if="errorMessage">{{errorMessage}}</div>
-    </div>
-
-    <!-- <BattleShipHeader/>
-    <Players/>
-    <Actions/>-->
+    <div class="error-message flex-center" v-if="errorMessage">{{errorMessage}}</div>
   </div>
 </template>
 
@@ -82,6 +56,9 @@ export default {
       selectedY: 0,
       errorMessage: null
     }
+  },
+  created () {
+    this.setBoard()
   },
   computed: {
     validateShipLength: function () {
@@ -114,6 +91,14 @@ export default {
       if (coordinate.selectedX >= this.boardSize || coordinate.selectedY >= this.boardSize) {
         return true
       }
+      return false
+    },
+    verifyTakenCell: function (x, y) {
+      console.log(x, y)
+      if (this.board && this.board[x] > 1) {
+        return true
+      }
+
       return false
     },
     validateIfTaken: function (coordinate) {
@@ -169,7 +154,7 @@ export default {
       console.log(this.validatePts(coordinates))
       if (this.validatePts(coordinates)) {
         coordinates.forEach((coordinate) => {
-          this.board[coordinate.selectedX][coordinate.selectedY] = 1
+          this.$set(this.board[coordinate.selectedX], coordinate.selectedY, 1)
         })
       }
     }
@@ -184,11 +169,11 @@ export default {
 <style scoped>
 .game {
   display: grid;
-  grid-template-rows: 20vh 10vh auto 5vh;
+  grid-template-rows: 20vh auto 5vh;
 }
-.board{
-      display: flex;
-    justify-content: center;
+.board {
+  display: flex;
+  justify-content: center;
 }
 .game .actions {
   height: 20vh;
@@ -202,7 +187,7 @@ export default {
   /* flex-direction: column;
   justify-content: space-around; */
   text-align: left;
-  width:96vw;
+  width: 96vw;
   margin: 0 auto;
   flex-direction: row;
   justify-content: space-evenly;
@@ -211,11 +196,10 @@ export default {
   color: #fff;
   background-color: green;
   border: 1px solid #000;
-
 }
 .ship-length label,
 .ship-length input {
-  display:block;
+  display: block;
   text-align: left;
 }
 ul {
@@ -238,23 +222,23 @@ li {
 .ship-dir-selection {
   text-align: left;
 }
-.activeShips{
+.activeShips {
   /* background-color: green;
   color: aliceblue */
 }
 td {
   width: 50px;
-  height:50px;
+  height: 50px;
   background: gray;
 }
-td.activeShips{
+td.activeShips {
   background: #438e43;
 }
-td.activeShips:hover{
+td.activeShips:hover {
   background: lightskyblue;
   cursor: pointer;
 }
-td.activeShips.taken{
+td.activeShips.taken {
   background: lightcoral;
 }
 .error-message {
